@@ -23,6 +23,7 @@
   --topbar:#0A1B2E; --topbar-text:#E7ECF3;
 }
 *{box-sizing:border-box;}
+[hidden]{display:none!important;}
 body{margin:0; background:var(--bg); color:var(--text); line-height:1.5;
   font-family:Montserrat,'Segoe UI',Roboto,-apple-system,Helvetica,Arial,sans-serif;
   -webkit-font-smoothing:antialiased;}
@@ -253,7 +254,7 @@ tfoot td.num{text-align:right;}
     </div>
     <div class="lg-field">
       <label for="clave">Contraseña</label>
-      <input type="password" id="clave" name="clave" placeholder="••••••••" autocomplete="current-password">
+      <input type="password" id="clave" name="clave" placeholder="cualquier contraseña" autocomplete="current-password">
     </div>
     <button type="submit">Ingresar</button>
     <div class="login-err" id="login-err"></div>
