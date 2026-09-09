@@ -3,7 +3,7 @@
 Maqueta visual navegable de la plataforma **QWS Payrolls** (Quality Wealth
 Strategy & SOPROFI). Muestra la interfaz del SaaS con datos de ejemplo.
 
-👉 **Ver el demo en vivo:** _<enlace de GitHub Pages una vez publicado>_
+👉 **Ver el demo en vivo:** https://abalvarezj.github.io/qws-payrolls-demo/
 
 - Login **demostrativo** (cualquier usuario/contraseña ingresa; la contraseña no
   se envía ni se guarda — no hay backend).
