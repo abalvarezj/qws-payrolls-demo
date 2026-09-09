@@ -1,0 +1,609 @@
+<title>QWS Payrolls · Plataforma</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap">
+<style>
+:root{
+  --navy:#0E2A47; --ink:#0A1E33; --navy-soft:#3A5A7D; --plata:#8B95A5;
+  --neutro:#EEF1F5; --rule:#D8DEE7; --verde:#1E7A5B; --ambar:#B7791F;
+  --bg:#E9EDF2; --surface:#FFFFFF; --text:#0A1E33; --muted:#6B7688;
+  --tile:#F4F6F9; --field:#FFFFFF; --field-bd:#C7D0DB; --focus:#3A5A7D;
+  --topbar:#0E2A47; --topbar-text:#FFFFFF;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0A1622; --surface:#0F2438; --text:#E7ECF3; --muted:#9AA7B8;
+    --rule:#1E3A55; --neutro:#12293F; --tile:#12293F; --navy-soft:#5B8FC7;
+    --field:#0C1E30; --field-bd:#2A4763; --focus:#5B8FC7;
+    --topbar:#0A1B2E; --topbar-text:#E7ECF3;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0A1622; --surface:#0F2438; --text:#E7ECF3; --muted:#9AA7B8;
+  --rule:#1E3A55; --neutro:#12293F; --tile:#12293F; --navy-soft:#5B8FC7;
+  --field:#0C1E30; --field-bd:#2A4763; --focus:#5B8FC7;
+  --topbar:#0A1B2E; --topbar-text:#E7ECF3;
+}
+*{box-sizing:border-box;}
+body{margin:0; background:var(--bg); color:var(--text); line-height:1.5;
+  font-family:Montserrat,'Segoe UI',Roboto,-apple-system,Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;}
+h1,h2,h3{text-wrap:balance;}
+.tnum{font-variant-numeric:tabular-nums;}
+
+/* ===== LOGIN ===== */
+#login-view{min-height:100vh; display:flex; align-items:center; justify-content:center;
+  padding:24px; background:
+    radial-gradient(1200px 600px at 70% -10%, rgba(58,90,125,.18), transparent 60%),
+    var(--bg);}
+.login-card{width:100%; max-width:400px; background:var(--surface);
+  border:1px solid var(--rule); border-radius:10px; padding:38px 34px;
+  box-shadow:0 12px 40px rgba(10,30,51,.16);}
+.login-logo{display:flex; justify-content:center; margin-bottom:8px;}
+.login-card h1{font-size:19px; font-weight:700; text-align:center; margin:14px 0 2px;}
+.login-card .sub{font-size:12.5px; color:var(--muted); text-align:center; margin:0 0 26px;}
+.lg-field{margin-bottom:16px;}
+.lg-field label{display:block; font-size:12px; font-weight:600; margin-bottom:6px;
+  letter-spacing:.2px;}
+.lg-field input{width:100%; padding:11px 13px; font:inherit; font-size:14px;
+  color:var(--text); background:var(--field); border:1px solid var(--field-bd);
+  border-radius:6px;}
+.lg-field input:focus{outline:2px solid var(--focus); outline-offset:1px;
+  border-color:var(--focus);}
+.login-card button{width:100%; padding:12px; font:inherit; font-size:14px;
+  font-weight:600; color:#fff; background:var(--navy); border:none; border-radius:6px;
+  cursor:pointer; margin-top:6px;}
+.login-card button:hover{background:#0A2138;}
+.login-err{color:#C0392B; font-size:12px; min-height:16px; margin-top:10px;
+  text-align:center;}
+.demo-tag{margin-top:20px; padding:9px 12px; background:var(--tile);
+  border:1px dashed var(--field-bd); border-radius:6px; font-size:11px;
+  color:var(--muted); text-align:center; line-height:1.5;}
+
+/* ===== APP SHELL ===== */
+.topbar{position:sticky; top:0; z-index:20; background:var(--topbar);
+  color:var(--topbar-text); display:flex; align-items:center; gap:20px;
+  padding:0 22px; height:60px;}
+.topbar .brand{display:flex; align-items:center; flex:0 0 auto;}
+.tabs{display:flex; gap:4px; flex:1 1 auto; overflow-x:auto; height:100%;}
+.tab-btn{appearance:none; background:none; border:none; color:rgba(255,255,255,.72);
+  font:inherit; font-size:13.5px; font-weight:600; padding:0 15px; height:60px;
+  cursor:pointer; border-bottom:3px solid transparent; white-space:nowrap;
+  letter-spacing:.2px;}
+.tab-btn:hover{color:#fff;}
+.tab-btn.active{color:#fff; border-bottom-color:#fff;}
+.userchip{display:flex; align-items:center; gap:10px; flex:0 0 auto;}
+.userchip .who{text-align:right; line-height:1.2;}
+.userchip .who .n{font-size:12.5px; font-weight:600;}
+.userchip .who .r{font-size:10.5px; color:rgba(255,255,255,.6);}
+.userchip .av{width:34px; height:34px; border-radius:50%; background:var(--navy-soft);
+  color:#fff; display:flex; align-items:center; justify-content:center;
+  font-weight:700; font-size:13px;}
+.logout{background:none; border:1px solid rgba(255,255,255,.28); color:#fff;
+  font:inherit; font-size:12px; font-weight:600; padding:7px 12px; border-radius:5px;
+  cursor:pointer;}
+.logout:hover{background:rgba(255,255,255,.1);}
+
+main{max-width:1000px; margin:0 auto; padding:28px 22px 60px;}
+.page{display:none;}
+.page.active{display:block;}
+.page-head{margin-bottom:22px;}
+.page-head h2{font-size:22px; font-weight:700; margin:0 0 4px; letter-spacing:-.2px;}
+.page-head p{font-size:13px; color:var(--muted); margin:0;}
+.eyebrow{font-size:11px; letter-spacing:2px; text-transform:uppercase;
+  color:var(--navy-soft); font-weight:600;}
+
+/* KPIs */
+.kpis{display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--rule);
+  border:1px solid var(--rule); border-radius:8px; overflow:hidden; margin-bottom:24px;}
+.kpi{background:var(--surface); padding:18px 16px;}
+.kpi .k{font-size:10.5px; letter-spacing:1px; text-transform:uppercase;
+  color:var(--muted); font-weight:600;}
+.kpi .v{font-size:23px; font-weight:700; margin-top:6px; letter-spacing:-.4px;}
+.kpi .v.pos{color:var(--verde);}
+.kpi .d{font-size:11px; color:var(--muted); margin-top:3px;}
+
+.card{background:var(--surface); border:1px solid var(--rule); border-radius:8px;
+  padding:22px 24px; margin-bottom:20px;}
+.card h3{font-size:13px; letter-spacing:1px; text-transform:uppercase;
+  color:var(--navy-soft); font-weight:600; margin:0 0 16px; padding-bottom:10px;
+  border-bottom:1px solid var(--rule);}
+.chart{width:100%; height:auto;}
+.bar-label{font:600 12px Montserrat,sans-serif; fill:var(--muted);}
+.bar-value{font:700 13px Montserrat,sans-serif;}
+.chart-note{font:700 12px Montserrat,sans-serif;}
+
+/* tabla */
+.tbl-wrap{overflow-x:auto;}
+table{width:100%; border-collapse:collapse; font-size:12.5px;}
+thead th{background:var(--navy); color:#fff; text-align:left; padding:10px 12px;
+  font-size:10.5px; letter-spacing:.5px; text-transform:uppercase; font-weight:600;}
+thead th.num{text-align:right;}
+tbody td{padding:9px 12px; border-bottom:1px solid var(--rule);}
+tbody td.num{text-align:right; font-variant-numeric:tabular-nums;}
+tbody tr:nth-child(even){background:var(--neutro);}
+td.pos{color:var(--verde); font-weight:600;}
+.est{font-size:11px; color:var(--muted);}
+tfoot td{padding:11px 12px; border-top:2px solid var(--navy); font-weight:700;
+  font-variant-numeric:tabular-nums;}
+tfoot td.num{text-align:right;}
+
+/* módulos / pills */
+.pill{display:inline-block; font-size:10px; font-weight:700; letter-spacing:.5px;
+  text-transform:uppercase; padding:3px 8px; border-radius:3px; background:var(--tile);
+  color:var(--muted);}
+.pill.alta{background:rgba(30,122,91,.14); color:var(--verde);}
+.pill.media{background:rgba(183,121,31,.14); color:var(--ambar);}
+.pill.navy{background:rgba(14,42,71,.1); color:var(--navy-soft);}
+
+/* form (cuestionario) */
+.grid{display:grid; grid-template-columns:1fr 1fr; gap:15px 20px;}
+.f.full{grid-column:1/-1;}
+.lab{display:block; font-size:12px; font-weight:600; margin-bottom:6px;}
+.lab .o{color:var(--muted); font-weight:400;}
+.grid input[type=text],.grid input[type=number],.grid select{width:100%;
+  padding:9px 12px; font:inherit; font-size:13px; color:var(--text);
+  background:var(--field); border:1px solid var(--field-bd); border-radius:5px;}
+.grid input:focus,.grid select:focus{outline:2px solid var(--focus); outline-offset:1px;}
+.segs{display:flex; gap:8px;}
+.seg{flex:1;}
+.seg input{position:absolute; opacity:0; pointer-events:none;}
+.seg label{display:block; text-align:center; padding:8px; font-size:12.5px;
+  border:1px solid var(--field-bd); border-radius:5px; cursor:pointer;
+  color:var(--muted); background:var(--field);}
+.seg input:checked + label{background:var(--navy); color:#fff; border-color:var(--navy);
+  font-weight:600;}
+.checks{display:flex; gap:9px; flex-wrap:wrap;}
+.chk{display:flex; align-items:center; gap:7px; padding:8px 12px; font-size:12.5px;
+  border:1px solid var(--field-bd); border-radius:5px; background:var(--field);
+  cursor:pointer;}
+.chk input{width:15px; height:15px; accent-color:var(--navy);}
+.btn-primary{background:var(--navy); color:#fff; border:none; font:inherit;
+  font-weight:600; font-size:13.5px; padding:11px 22px; border-radius:6px; cursor:pointer;}
+.btn-primary:hover{background:#0A2138;}
+
+/* triaje result */
+.pot{display:flex; gap:14px; align-items:center; flex-wrap:wrap; padding:16px 18px;
+  background:var(--tile); border-radius:6px; border-left:4px solid var(--plata);}
+.pot.alto{border-left-color:var(--verde);}
+.pot.medio{border-left-color:var(--ambar);}
+.pot .badge{font-size:11px; font-weight:700; letter-spacing:.8px; text-transform:uppercase;
+  padding:6px 11px; border-radius:3px; color:#fff; background:var(--plata); white-space:nowrap;}
+.pot.alto .badge{background:var(--verde);} .pot.medio .badge{background:var(--ambar);}
+.pot .just{font-size:12.5px; flex:1 1 240px;}
+.estim{margin-top:16px; padding:18px 20px; background:var(--navy); color:#fff;
+  border-radius:6px;}
+.estim .k{font-size:10.5px; letter-spacing:1.6px; text-transform:uppercase; color:#AEC3DB;
+  font-weight:600;}
+.estim .v{font-size:28px; font-weight:700; margin-top:6px; letter-spacing:-.4px;}
+.estim .n{font-size:11px; color:#AEC3DB; margin-top:7px;}
+.mod-row{display:flex; align-items:center; gap:12px; padding:11px 0;
+  border-bottom:1px solid var(--rule); font-size:13px;}
+.mod-row:last-child{border-bottom:none;}
+.mod-row .dot{width:9px;height:9px;border-radius:50%;background:var(--rule);flex:0 0 auto;}
+.mod-row.on .dot{background:var(--verde);}
+.mod-row .mn{flex:1 1 auto; font-weight:600;}
+.callout{margin-top:16px; padding:13px 16px; border-radius:6px;
+  border-left:3px solid var(--ambar); background:rgba(183,121,31,.08); font-size:12px;}
+.callout .ct{font-weight:700; color:var(--ambar); text-transform:uppercase; font-size:10.5px;
+  letter-spacing:.5px; display:block; margin-bottom:5px;}
+
+/* regímenes cards */
+.reg-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:14px;}
+.reg{border:1px solid var(--rule); border-radius:8px; padding:16px 18px; background:var(--surface);}
+.reg .top{display:flex; justify-content:space-between; align-items:baseline; gap:8px;}
+.reg .rn{font-size:14px; font-weight:700; letter-spacing:-.2px;}
+.reg .clave{font-size:11px; font-weight:700; color:var(--navy-soft); background:var(--tile);
+  padding:2px 7px; border-radius:3px; flex:0 0 auto;}
+.reg .isr{font-size:12px; color:var(--muted); margin-top:6px;}
+.reg .isr b{color:var(--text);}
+.reg .flag{margin-top:10px; font-size:10.5px; color:var(--ambar); display:flex; gap:5px;}
+
+.info{padding:14px 16px; border-radius:6px; background:var(--tile); font-size:12.5px;
+  color:var(--muted); border-left:3px solid var(--navy-soft); margin-bottom:18px;}
+.soon{display:inline-block; font-size:10px; font-weight:700; letter-spacing:.5px;
+  text-transform:uppercase; color:var(--ambar); background:rgba(183,121,31,.12);
+  padding:3px 8px; border-radius:3px;}
+
+/* Inicio */
+.welcome{background:var(--surface); border:1px solid var(--rule); border-radius:10px;
+  border-left:4px solid var(--navy); padding:30px 32px; margin-bottom:26px;}
+.welcome .hello{font-size:11px; letter-spacing:2px; text-transform:uppercase;
+  color:var(--navy-soft); font-weight:600;}
+.welcome h2{font-size:25px; font-weight:700; margin:8px 0 14px; letter-spacing:-.3px;}
+.welcome .intro{font-size:14px; line-height:1.75; color:var(--text); max-width:66ch;
+  margin:0;}
+.idx-title{font-size:11px; letter-spacing:2px; text-transform:uppercase;
+  color:var(--navy-soft); font-weight:600; margin:0 0 14px;}
+.index-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
+  gap:14px;}
+.idx{display:flex; flex-direction:column; text-align:left; background:var(--surface);
+  border:1px solid var(--rule); border-radius:8px; padding:18px 20px; cursor:pointer;
+  font:inherit; color:inherit; transition:border-color .15s, transform .15s,
+  box-shadow .15s;}
+.idx:hover{border-color:var(--navy-soft); transform:translateY(-2px);
+  box-shadow:0 6px 20px rgba(10,30,51,.10);}
+.idx:focus-visible{outline:2px solid var(--focus); outline-offset:2px;}
+.idx .n{font-size:11px; font-weight:700; color:var(--navy-soft); background:var(--tile);
+  width:26px; height:26px; border-radius:50%; display:flex; align-items:center;
+  justify-content:center;}
+.idx .t{font-size:15px; font-weight:700; margin:12px 0 5px; letter-spacing:-.2px;}
+.idx .d{font-size:12.5px; color:var(--muted); line-height:1.55; flex:1 1 auto;}
+.idx .go{font-size:11.5px; color:var(--navy-soft); font-weight:600; margin-top:12px;}
+.legal{margin-top:30px; padding-top:16px; border-top:1px solid var(--rule);
+  font-size:10.5px; line-height:1.6; color:var(--muted); max-width:82ch;}
+.legal strong{color:var(--text); font-weight:600;}
+@media (max-width:720px){ .kpis{grid-template-columns:repeat(2,1fr);} .grid{grid-template-columns:1fr;} }
+</style>
+
+<!-- =================== LOGIN =================== -->
+<div id="login-view">
+  <form class="login-card" id="login-form" autocomplete="off">
+    <div class="login-logo">
+      <svg height="46" viewBox="0 0 72 72" role="img" aria-label="QWS" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="36" cy="36" r="26" fill="none" stroke="#0E2A47" stroke-width="6" stroke-dasharray="30 9" transform="rotate(-90 36 36)"/>
+        <circle cx="36" cy="36" r="26" fill="none" stroke="#8B95A5" stroke-width="6" stroke-dasharray="9 108" transform="rotate(56 36 36)"/>
+        <polyline points="20,48 31,40 39,44 52,24" fill="none" stroke="#0E2A47" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/>
+        <path d="M45,24 L52,24 L52,31" fill="none" stroke="#0E2A47" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <h1>QWS Payrolls</h1>
+    <p class="sub">Cerebro Financiero de Nómina · QWS &amp; SOPROFI</p>
+    <div class="lg-field">
+      <label for="usuario">Usuario</label>
+      <input type="text" id="usuario" name="usuario" placeholder="tu.usuario" autocomplete="username">
+    </div>
+    <div class="lg-field">
+      <label for="clave">Contraseña</label>
+      <input type="password" id="clave" name="clave" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <button type="submit">Ingresar</button>
+    <div class="login-err" id="login-err"></div>
+    <div class="demo-tag">Demo visual · sin autenticación real. Cualquier usuario y
+      contraseña ingresan; la clave no se envía ni se guarda.</div>
+  </form>
+</div>
+
+<!-- =================== APP =================== -->
+<div id="app-view" hidden>
+  <header class="topbar">
+    <div class="brand">
+      <svg height="34" viewBox="0 0 220 72" role="img" aria-label="Quality Wealth Strategy" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="36" cy="36" r="26" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-dasharray="30 9" transform="rotate(-90 36 36)"/>
+        <circle cx="36" cy="36" r="26" fill="none" stroke="#8B95A5" stroke-width="6" stroke-dasharray="9 108" transform="rotate(56 36 36)"/>
+        <polyline points="20,48 31,40 39,44 52,24" fill="none" stroke="#FFFFFF" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/>
+        <path d="M45,24 L52,24 L52,31" fill="none" stroke="#FFFFFF" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/>
+        <text x="80" y="34" font-family="Montserrat,sans-serif" font-size="24" font-weight="700" letter-spacing="1.2" fill="#FFFFFF">QUALITY</text>
+        <text x="81" y="53" font-family="Montserrat,sans-serif" font-size="13" font-weight="300" letter-spacing="3.4" fill="#8B95A5">WEALTH STRATEGY</text>
+      </svg>
+    </div>
+    <nav class="tabs" id="tabs">
+      <button class="tab-btn active" data-tab="inicio">Inicio</button>
+      <button class="tab-btn" data-tab="cuestionario">Cuestionario</button>
+      <button class="tab-btn" data-tab="diagnostico">Diagnóstico</button>
+      <button class="tab-btn" data-tab="panel">Panel</button>
+      <button class="tab-btn" data-tab="tesoreria">Tesorería &amp; FX</button>
+      <button class="tab-btn" data-tab="regimenes">Regímenes</button>
+    </nav>
+    <div class="userchip">
+      <div class="who"><div class="n" id="chip-name">Usuario</div><div class="r">Ejecutivo de Cuenta</div></div>
+      <div class="av" id="chip-av">U</div>
+      <button class="logout" id="logout">Salir</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- ===== INICIO ===== -->
+    <section class="page active" data-page="inicio">
+      <div class="welcome">
+        <div class="hello">Bienvenido</div>
+        <h2>Hola, <span id="welcome-name">Usuario</span> — le damos la bienvenida a QWS Payrolls</h2>
+        <p class="intro">QWS Payrolls transforma el modelo validado del
+          <strong>Cerebro Financiero de Nómina</strong> en una plataforma que
+          maximiza el flujo de efectivo operativo de su empresa. Automatiza el
+          arbitraje de previsión social para encontrar el mix óptimo de
+          prestaciones —sin reducir el ingreso neto de sus colaboradores—, genera
+          diagnósticos con proyecciones de ahorro y retorno, compara regímenes de
+          contratación con guardarraíles de cumplimiento, y se integra con las
+          soluciones de tesorería y FX de SOPROFI. Todo en una sola herramienta,
+          con la solidez analítica de una firma institucional.</p>
+      </div>
+
+      <div class="idx-title">Índice de la plataforma</div>
+      <div class="index-grid">
+        <button class="idx" data-goto="cuestionario">
+          <span class="n">1</span><span class="t">Cuestionario</span>
+          <span class="d">Levante el perfil del prospecto y obtenga un triaje
+            instantáneo de módulos aplicables y ahorro preliminar.</span>
+          <span class="go">Abrir &rarr;</span>
+        </button>
+        <button class="idx" data-goto="diagnostico">
+          <span class="n">2</span><span class="t">Diagnóstico</span>
+          <span class="d">El "Gran Número": flujo de efectivo liberado y detalle
+            por colaborador, listo para exportar a PDF.</span>
+          <span class="go">Abrir &rarr;</span>
+        </button>
+        <button class="idx" data-goto="panel">
+          <span class="n">3</span><span class="t">Panel</span>
+          <span class="d">Tablero ejecutivo con ahorro acumulado, eficiencia del
+            gasto de nómina y retorno de las estrategias.</span>
+          <span class="go">Abrir &rarr;</span>
+        </button>
+        <button class="idx" data-goto="tesoreria">
+          <span class="n">4</span><span class="t">Tesorería &amp; FX</span>
+          <span class="d">Dispersión, optimización de comisiones y operaciones
+            cambiarias con las soluciones de SOPROFI.</span>
+          <span class="go">Abrir &rarr;</span>
+        </button>
+        <button class="idx" data-goto="regimenes">
+          <span class="n">5</span><span class="t">Regímenes</span>
+          <span class="d">Base de conocimiento de los regímenes fiscales de
+            contratación en México, con notas de cumplimiento.</span>
+          <span class="go">Abrir &rarr;</span>
+        </button>
+      </div>
+
+      <div class="legal">
+        <strong>Aviso legal.</strong> QWS Payrolls es una herramienta de
+        diagnóstico y estimación financiera. Las cifras y proyecciones son de
+        carácter informativo y no constituyen asesoría fiscal, contable ni legal
+        individualizada; deben validarse con la legislación vigente y un
+        profesional autorizado. La implementación de esquemas de compensación y
+        contratación es responsabilidad del contribuyente.
+        &nbsp;&copy; 2026 Quality Wealth Strategy (QWS) &amp; SOPROFI. Todos los
+        derechos reservados.
+      </div>
+    </section>
+
+    <!-- ===== PANEL ===== -->
+    <section class="page" data-page="panel">
+      <div class="page-head">
+        <div class="eyebrow">Resumen ejecutivo</div>
+        <h2>Panel de control</h2>
+        <p>Cartera de demostración — Grupo Manufacturas del Bajío, S.A. de C.V. · 6 colaboradores.</p>
+      </div>
+      <div class="kpis">
+        <div class="kpi"><div class="k">Flujo liberado (anual)</div><div class="v pos">$75,351</div><div class="d">El Gran Número</div></div>
+        <div class="kpi"><div class="k">Ahorro mensual</div><div class="v">$6,279</div><div class="d">promedio de cartera</div></div>
+        <div class="kpi"><div class="k">% del costo</div><div class="v">1.88%</div><div class="d">de la nómina anual</div></div>
+        <div class="kpi"><div class="k">Colaboradores</div><div class="v">6</div><div class="d">analizados</div></div>
+      </div>
+      <div class="card">
+        <h3>Costo de nómina · antes y después</h3>
+        <svg viewBox="0 0 560 175" class="chart" role="img" aria-label="Comparativa de costo anual">
+          <text x="8" y="20" class="bar-label">Costo anual actual</text>
+          <rect x="8" y="28" width="512" height="30" rx="2" fill="#0E2A47"/>
+          <text x="510" y="48" text-anchor="end" class="bar-value" fill="#FFFFFF">$4,003,667</text>
+          <text x="8" y="88" class="bar-label">Costo anual optimizado</text>
+          <rect x="8" y="96" width="502" height="30" rx="2" fill="#3A5A7D"/>
+          <text x="500" y="116" text-anchor="end" class="bar-value" fill="#FFFFFF">$3,928,316</text>
+          <text x="264" y="152" text-anchor="middle" class="chart-note" fill="#1E7A5B">Flujo liberado: $75,351 / año</text>
+        </svg>
+      </div>
+      <div class="card">
+        <h3>Módulos activos</h3>
+        <div class="mod-row on"><span class="dot"></span><span class="mn">Arbitraje de Previsión Social (SaaS 1)</span><span class="pill alta">Alta</span></div>
+        <div class="mod-row on"><span class="dot"></span><span class="mn">Comparador de Régimen de Contratación</span><span class="pill media">Media</span></div>
+        <div class="mod-row on"><span class="dot"></span><span class="mn">Tesorería y FX (SOPROFI)</span><span class="pill alta">Alta</span></div>
+      </div>
+    </section>
+
+    <!-- ===== CUESTIONARIO ===== -->
+    <section class="page" data-page="cuestionario">
+      <div class="page-head">
+        <div class="eyebrow">Levantamiento de prospecto</div>
+        <h2>Cuestionario de diagnóstico</h2>
+        <p>Captura el perfil del cliente y genera el triaje de módulos y ahorro preliminar.</p>
+      </div>
+      <div class="card">
+        <h3>1 · Perfil y operación</h3>
+        <div class="grid">
+          <div class="f"><label class="lab">Razón social</label><input type="text" id="q_razon" placeholder="Empresa, S.A. de C.V."></div>
+          <div class="f"><label class="lab">Giro <span class="o">— clase de riesgo IMSS</span></label><input type="text" id="q_giro" placeholder="Manufactura…"></div>
+          <div class="f"><label class="lab">Empleados activos</label><input type="number" id="q_emp" min="0" placeholder="150"></div>
+          <div class="f"><label class="lab">Costo de nómina mensual (MXN)</label><input type="number" id="q_costo" min="0" step="1000" placeholder="4000000"></div>
+          <div class="f full"><label class="lab">Personal operativo/campo: <span id="q_opv">50</span>%</label><input type="range" id="q_op" min="0" max="100" step="5" value="50" style="width:100%;"></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>2 · Régimen &amp; 3 · Compensación</h3>
+        <div class="grid">
+          <div class="f"><label class="lab">¿Toda la plantilla en Sueldos y Salarios (605)?</label>
+            <div class="segs"><span class="seg"><input type="radio" name="q605" id="q605s" value="si" checked><label for="q605s">Sí</label></span><span class="seg"><input type="radio" name="q605" id="q605n" value="no"><label for="q605n">No</label></span></div></div>
+          <div class="f"><label class="lab">¿Usa proveedores 612 / RESICO PF?</label>
+            <div class="segs"><span class="seg"><input type="radio" name="qprov" id="qprovn" value="no" checked><label for="qprovn">No</label></span><span class="seg"><input type="radio" name="qprov" id="qprovs" value="si"><label for="qprovs">Sí</label></span></div></div>
+          <div class="f"><label class="lab">¿Compensación variable? <span class="o">bonos, comisiones</span></label>
+            <div class="segs"><span class="seg"><input type="radio" name="qcv" id="qcvs" value="si"><label for="qcvs">Sí</label></span><span class="seg"><input type="radio" name="qcv" id="qcvn" value="no" checked><label for="qcvn">No</label></span></div></div>
+          <div class="f"><label class="lab">¿Requerimientos de FX (divisas)?</label>
+            <div class="segs"><span class="seg"><input type="radio" name="qfx" id="qfxn" value="no" checked><label for="qfxn">No</label></span><span class="seg"><input type="radio" name="qfx" id="qfxs" value="si"><label for="qfxs">Sí</label></span></div></div>
+          <div class="f full"><label class="lab">Prestaciones superiores a la ley</label>
+            <div class="checks"><label class="chk"><input type="checkbox" id="q_fondo"> Fondo de ahorro</label><label class="chk"><input type="checkbox" id="q_vales"> Vales de despensa</label><label class="chk"><input type="checkbox" id="q_seg"> Seguros médicos</label></div></div>
+        </div>
+        <div style="margin-top:18px;"><button class="btn-primary" id="q_btn">Generar triaje</button></div>
+      </div>
+      <div class="card" id="q_result" hidden>
+        <h3>Triaje del prospecto</h3>
+        <div class="pot" id="q_pot"><span class="badge" id="q_badge">—</span><span class="just" id="q_just"></span></div>
+        <div class="estim"><div class="k">Ahorro anual estimado · preliminar</div><div class="v" id="q_estim">—</div><div class="n" id="q_estimn"></div></div>
+        <div style="margin-top:18px;" id="q_mods"></div>
+        <div class="callout" id="q_alert" hidden><span class="ct">Alertas de cumplimiento</span><span id="q_alert_t"></span></div>
+      </div>
+    </section>
+
+    <!-- ===== DIAGNÓSTICO ===== -->
+    <section class="page" data-page="diagnostico">
+      <div class="page-head">
+        <div class="eyebrow">Resultado del motor de 7 calculadoras</div>
+        <h2>Diagnóstico de optimización</h2>
+        <p>Grupo Manufacturas del Bajío, S.A. de C.V. · escenario cost-neutral.</p>
+      </div>
+      <div class="estim" style="margin-bottom:22px;">
+        <div class="k">Flujo de efectivo liberado · anualizado</div>
+        <div class="v" style="font-size:40px;">$75,351</div>
+        <div class="n">1.88% del costo de nómina · el personal mantiene o mejora su ingreso neto.</div>
+      </div>
+      <div class="card">
+        <h3>Detalle por colaborador</h3>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Colaborador</th><th>Estado</th><th class="num">Costo act./mes</th><th class="num">Costo optim./mes</th><th class="num">Ahorro/mes</th><th class="num">Flujo anual</th><th class="num">Δ Neto trab.</th></tr></thead>
+            <tbody id="diag-rows"></tbody>
+            <tfoot><tr><td colspan="4">Total cartera</td><td class="num">$6,279</td><td class="num">$75,351</td><td class="num"></td></tr></tfoot>
+          </table>
+        </div>
+      </div>
+      <div class="info">Diagnóstico generado a partir de la carga de plantilla. En la
+        plataforma real, este reporte se exporta a PDF con la identidad corporativa QWS.</div>
+    </section>
+
+    <!-- ===== REGÍMENES ===== -->
+    <section class="page" data-page="regimenes">
+      <div class="page-head">
+        <div class="eyebrow">Base de conocimiento fiscal</div>
+        <h2>Regímenes de contratación (SAT)</h2>
+        <p>Catálogo de referencia. El comparador de régimen aplica el guardarraíl anti-simulación.</p>
+      </div>
+      <div class="info">Comparar regímenes no autoriza disfrazar una relación de
+        subordinación real como contratación independiente (simulación · LFT/LSS,
+        reformas 2021). <span class="flag">▲</span> = requiere verificación local / nota de cumplimiento.</div>
+      <div class="reg-grid" id="reg-grid"></div>
+    </section>
+
+    <!-- ===== TESORERÍA & FX ===== -->
+    <section class="page" data-page="tesoreria">
+      <div class="page-head">
+        <div class="eyebrow">Módulo SOPROFI</div>
+        <h2>Tesorería &amp; FX <span class="soon">Próxima etapa</span></h2>
+        <p>Dispersión de nómina, optimización de comisiones y operaciones cambiarias.</p>
+      </div>
+      <div class="kpis">
+        <div class="kpi"><div class="k">Dispersión quincenal</div><div class="v">$2.0M</div><div class="d">volumen estimado</div></div>
+        <div class="kpi"><div class="k">Comisiones/mes</div><div class="v">$15,000</div><div class="d">optimizables</div></div>
+        <div class="kpi"><div class="k">Exposición FX</div><div class="v">USD</div><div class="d">pago a proveedores</div></div>
+        <div class="kpi"><div class="k">Ahorro FX potencial</div><div class="v pos">—</div><div class="d">por cotizar</div></div>
+      </div>
+      <div class="card">
+        <h3>Alcance del módulo</h3>
+        <div class="mod-row"><span class="dot"></span><span class="mn">Integración con instituciones de dispersión (APIs)</span><span class="pill navy">Diseño</span></div>
+        <div class="mod-row"><span class="dot"></span><span class="mn">Optimización de comisiones transaccionales</span><span class="pill navy">Diseño</span></div>
+        <div class="mod-row"><span class="dot"></span><span class="mn">Ejecución de compra/venta de divisas (FX)</span><span class="pill navy">Diseño</span></div>
+        <div class="mod-row"><span class="dot"></span><span class="mn">Dispersión a directivos extranjeros</span><span class="pill navy">Diseño</span></div>
+      </div>
+      <div class="info">Este módulo conecta el SaaS 2 con las soluciones de tesorería y
+        FX de SOPROFI (Fase 3). Las cifras mostradas son ilustrativas.</div>
+    </section>
+  </main>
+</div>
+
+<script>
+(function(){
+  var $=function(id){return document.getElementById(id);};
+  var UKEY="qws_demo_user";
+
+  /* ---------- LOGIN (demo, sin seguridad real) ---------- */
+  function entrar(usuario){
+    var u=(usuario||"Usuario").trim()||"Usuario";
+    $("chip-name").textContent=u;
+    $("chip-av").textContent=u.charAt(0).toUpperCase();
+    var wn=$("welcome-name"); if(wn) wn.textContent=u;
+    $("login-view").hidden=true;
+    $("app-view").hidden=false;
+    try{ localStorage.setItem(UKEY,u); }catch(e){}
+    window.scrollTo(0,0);
+  }
+  $("login-form").addEventListener("submit",function(e){
+    e.preventDefault();
+    var u=$("usuario").value.trim(), c=$("clave").value;
+    if(!u||!c){ $("login-err").textContent="Ingresa usuario y contraseña."; return; }
+    $("login-err").textContent="";
+    $("clave").value="";           // la contraseña no se guarda ni se transmite
+    entrar(u);
+  });
+  $("logout").addEventListener("click",function(){
+    $("app-view").hidden=true; $("login-view").hidden=false;
+    $("usuario").value=""; $("clave").value="";
+    try{ localStorage.removeItem(UKEY); }catch(e){}
+  });
+
+  /* ---------- TABS ---------- */
+  var tabs=document.querySelectorAll(".tab-btn");
+  var pages=document.querySelectorAll(".page");
+  function irA(name){
+    tabs.forEach(function(x){x.classList.toggle("active", x.getAttribute("data-tab")===name);});
+    pages.forEach(function(p){ p.classList.toggle("active", p.getAttribute("data-page")===name); });
+    window.scrollTo(0,0);
+  }
+  tabs.forEach(function(t){ t.addEventListener("click",function(){ irA(t.getAttribute("data-tab")); }); });
+  // Índice de la pestaña Inicio -> navega a la sección correspondiente
+  document.querySelectorAll(".idx").forEach(function(c){
+    c.addEventListener("click", function(){ irA(c.getAttribute("data-goto")); });
+  });
+
+  /* ---------- DIAGNÓSTICO: filas ---------- */
+  var ROWS=[
+    ["Juan Pérez López","Ciudad de México",37315,36197,1118,13419,1106],
+    ["María Fernanda Ríos","Jalisco",54615,53198,1417,17005,1592],
+    ["Carlos Mendoza Salas","Nuevo León",110296,109345,951,11407,1914],
+    ["Ana Sofía Torres","Estado de México",29499,28681,818,9817,843],
+    ["Roberto Aguilar Vega","Baja California",80568,79075,1493,17914,1985],
+    ["Lucía Hernández Cruz","Yucatán",21345,20862,482,5790,412]
+  ];
+  var mxn0=function(v){return "$"+Math.round(v).toLocaleString("es-MX");};
+  $("diag-rows").innerHTML=ROWS.map(function(r){
+    return "<tr><td>"+r[0]+"</td><td class='est'>"+r[1]+"</td><td class='num'>"+mxn0(r[2])+
+      "</td><td class='num'>"+mxn0(r[3])+"</td><td class='num pos'>"+mxn0(r[4])+
+      "</td><td class='num'>"+mxn0(r[5])+"</td><td class='num pos'>+"+mxn0(r[6])+"</td></tr>";
+  }).join("");
+
+  /* ---------- REGÍMENES ---------- */
+  var REG=[
+    ["Sueldos y Salarios","605","ISR progresivo ≤35% · IMSS + prestaciones de ley",false],
+    ["Asimilados a Salarios","605","ISR progresivo · sin prestaciones de ley",true],
+    ["RESICO Personas Físicas","626","ISR 1%–2.5% · tope 3.5M anual",true],
+    ["Actividades Profesionales","612","ISR progresivo ≤35% · deduce gastos",true],
+    ["Arrendamiento","606","ISR progresivo · deducción ciega 35%",false],
+    ["Plataformas Tecnológicas","625","Retenciones por plataforma",false],
+    ["PM · Régimen General","601","ISR 30% fijo · sin límite",false],
+    ["PM · RESICO","626","ISR 30% · flujo de efectivo · tope 35M",false],
+    ["PM · No Lucrativas","603","Sin ISR por objeto social",false],
+    ["Incorporación Fiscal (RIF)","621","En extinción · sin nuevas altas",true]
+  ];
+  $("reg-grid").innerHTML=REG.map(function(r){
+    return "<div class='reg'><div class='top'><span class='rn'>"+r[0]+"</span>"+
+      "<span class='clave'>"+r[1]+"</span></div><div class='isr'>"+r[2]+"</div>"+
+      (r[3]?"<div class='flag'>▲ Verificación / cumplimiento pendiente</div>":"")+"</div>";
+  }).join("");
+
+  /* ---------- CUESTIONARIO: triaje (misma lógica que el backend) ---------- */
+  var rop=$("q_op"); rop.addEventListener("input",function(){$("q_opv").textContent=rop.value;});
+  function radio(n){var e=document.querySelector('input[name="'+n+'"]:checked');return e?e.value:null;}
+  function nnum(id){var v=parseFloat($(id).value);return isNaN(v)?0:v;}
+  var BANDAS={Alto:[0.020,0.035],Medio:[0.010,0.022],Bajo:[0.003,0.010]};
+  var mxn=function(v){return v.toLocaleString('es-MX',{style:'currency',currency:'MXN',maximumFractionDigits:0});};
+  $("q_btn").addEventListener("click",function(){
+    var costo=nnum("q_costo"), op=parseInt(rop.value,10);
+    var cv=radio("qcv")==="si", prov=radio("qprov")==="si", toda605=radio("q605")==="si", fx=radio("qfx")==="si";
+    var prest=$("q_fondo").checked||$("q_vales").checked||$("q_seg").checked;
+    var pot,just;
+    if(cv){pot="Alto";just="Paga compensación variable (bonos/comisiones gravables), materia prima ideal para reclasificar hacia prestaciones exentas manteniendo el costo total.";}
+    else if(prest){pot="Medio";just="Otorga prestaciones superiores a la ley; hay margen para optimizar la mezcla hasta los topes UMA, aunque sin compensación variable el efectivo reclasificable es limitado.";}
+    else{pot="Bajo";just="Sin compensación variable ni prestaciones superiores, el arbitraje cost-neutral es limitado; conviene revisar caso por caso.";}
+    var anual=costo*12,b=BANDAS[pot],prio={Alto:"alta",Medio:"media",Bajo:"baja"}[pot];
+    $("q_pot").className="pot "+pot.toLowerCase();
+    $("q_badge").textContent="Potencial "+pot; $("q_just").textContent=just;
+    $("q_estim").textContent=mxn(anual*b[0])+"  –  "+mxn(anual*b[1]);
+    $("q_estimn").textContent=anual>0?("Rango preliminar sobre nómina anual de "+mxn(anual)+". El diagnóstico exacto requiere la carga de plantilla."):"Captura el costo de nómina para estimar.";
+    var apReg=prov||!toda605, apFx=fx;
+    var mods=[["Arbitraje de Previsión Social",true,prio],
+      ["Comparador de Régimen de Contratación",apReg,apReg?"media":"n/a"],
+      ["Tesorería y FX (SOPROFI)",apFx,apFx?"alta":"n/a"]];
+    $("q_mods").innerHTML=mods.map(function(m){
+      var pc=(m[2]==="alta"||m[2]==="media")?m[2]:"";
+      return "<div class='mod-row "+(m[1]?"on":"")+"'><span class='dot'></span><span class='mn'>"+m[0]+
+        "</span><span class='pill "+pc+"'>"+(m[1]?m[2]:"no aplica")+"</span></div>";
+    }).join("");
+    if(prov){$("q_alert").hidden=false;$("q_alert_t").textContent="Usa proveedores 612/RESICO PF: verificar relaciones genuinamente independientes. Sustituir subordinación real es simulación (LFT/LSS, reformas 2021).";}
+    else{$("q_alert").hidden=true;}
+    $("q_result").hidden=false;
+    $("q_result").scrollIntoView({behavior:"smooth",block:"nearest"});
+  });
+})();
+</script>
