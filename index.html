@@ -233,6 +233,65 @@ tfoot td.num{text-align:right;}
   font-size:10.5px; line-height:1.6; color:var(--muted); max-width:82ch;}
 .legal strong{color:var(--text); font-weight:600;}
 @media (max-width:720px){ .kpis{grid-template-columns:repeat(2,1fr);} .grid{grid-template-columns:1fr;} }
+
+/* Regímenes: badge de riesgo + detalle (Mejora 1) */
+.reg{cursor:pointer; text-align:left; font:inherit; color:inherit; width:100%;
+  transition:border-color .15s, transform .15s;}
+.reg:hover{border-color:var(--navy-soft); transform:translateY(-2px);}
+.reg-foot{display:flex; justify-content:space-between; align-items:center; margin-top:12px;}
+.reg-mas{font-size:11px; color:var(--navy-soft); font-weight:600;}
+.riesgo{font-size:11px; font-weight:700; letter-spacing:.4px; padding:3px 9px;
+  border-radius:20px; white-space:nowrap;}
+.riesgo.sm{font-size:10px; padding:2px 8px;}
+.riesgo.leve{background:rgba(30,122,91,.15); color:var(--verde);}
+.riesgo.moderado{background:rgba(183,121,31,.17); color:var(--ambar);}
+.riesgo.alto{background:rgba(192,57,43,.15); color:#C0392B;}
+.reg-detalle{margin-top:18px; border:1px solid var(--rule); border-radius:10px;
+  padding:20px 22px; background:var(--surface);}
+.rd-top{display:flex; justify-content:space-between; align-items:center; gap:12px;
+  flex-wrap:wrap; padding-bottom:12px; border-bottom:1px solid var(--rule);}
+.rd-name{font-size:17px; font-weight:700; margin-right:8px;}
+.rd-nota{margin-top:12px; font-size:12px; color:var(--ambar);
+  background:rgba(183,121,31,.08); border-radius:6px; padding:9px 12px;}
+.rd-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:14px; margin-top:14px;}
+.rd-blk .rd-h{font-size:11px; font-weight:700; text-transform:uppercase;
+  letter-spacing:.6px; margin-bottom:7px;}
+.rd-blk.pos .rd-h{color:var(--verde);} .rd-blk.neg .rd-h{color:var(--ambar);}
+.rd-blk.leg .rd-h{color:#C0392B;}
+.rd-blk ul{margin:0; padding-left:16px;}
+.rd-blk li{font-size:12.5px; margin:4px 0; color:var(--text);}
+.rd-mot{margin-top:14px;}
+.rd-mot .rd-h{font-size:11px; font-weight:700; text-transform:uppercase;
+  color:var(--muted); margin-bottom:7px;}
+.rchip{display:inline-block; font-size:11px; font-weight:600; padding:4px 10px;
+  border-radius:20px; background:var(--tile); border:1px solid var(--rule);
+  margin:0 6px 6px 0;}
+.rd-disc{margin-top:14px; font-size:10.5px; color:var(--muted);
+  border-top:1px solid var(--rule); padding-top:10px;}
+/* Prestaciones (Mejora 2) */
+.pres-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(330px,1fr)); gap:16px;}
+.pcard{border:1px solid var(--rule); border-radius:10px; padding:18px 20px; background:var(--surface);}
+.ptop{display:flex; justify-content:space-between; align-items:baseline; gap:8px;}
+.pn{font-size:15px; font-weight:700;}
+.pcat{font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.4px;
+  color:var(--navy-soft); background:var(--tile); padding:2px 7px; border-radius:3px; white-space:nowrap;}
+.pfis{font-size:12px; color:var(--muted); margin-top:8px;}
+.pend{color:var(--ambar); font-weight:600;}
+.pcols{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px;}
+.pcol .pch{font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.4px; margin-bottom:5px;}
+.pcol.pos .pch{color:var(--verde);} .pcol.neg .pch{color:var(--ambar);}
+.pcol ul{margin:0; padding-left:15px;} .pcol li{font-size:11.5px; margin:4px 0; color:var(--text);}
+.psim{margin-top:14px;} .psim label{display:block; font-size:11px; font-weight:600; color:var(--muted); margin-bottom:5px;}
+.psim-in{width:100%; padding:8px 11px; font:inherit; font-size:13px; color:var(--text);
+  background:var(--field); border:1px solid var(--field-bd); border-radius:5px;}
+.pres{margin-top:10px; display:flex; flex-direction:column; gap:6px;}
+.pres-split{font-size:12px; color:var(--muted); font-variant-numeric:tabular-nums;}
+.pres-v{font-size:12px; font-weight:700; padding:4px 9px; border-radius:4px; align-self:flex-start;}
+.pres-v.pos{background:rgba(30,122,91,.15); color:var(--verde);}
+.pres-v.mid{background:rgba(183,121,31,.15); color:var(--ambar);}
+.pres-v.neg{background:rgba(192,57,43,.15); color:#C0392B;}
+@media(max-width:640px){ .pcols{grid-template-columns:1fr;} }
 </style>
 
 <!-- =================== LOGIN =================== -->
@@ -281,6 +340,7 @@ tfoot td.num{text-align:right;}
       <button class="tab-btn" data-tab="cuestionario">Cuestionario</button>
       <button class="tab-btn" data-tab="diagnostico">Diagnóstico</button>
       <button class="tab-btn" data-tab="panel">Panel</button>
+      <button class="tab-btn" data-tab="prestaciones">Prestaciones</button>
       <button class="tab-btn" data-tab="tesoreria">Tesorería &amp; FX</button>
       <button class="tab-btn" data-tab="regimenes">Regímenes</button>
     </nav>
@@ -328,14 +388,20 @@ tfoot td.num{text-align:right;}
             gasto de nómina y retorno de las estrategias.</span>
           <span class="go">Abrir &rarr;</span>
         </button>
+        <button class="idx" data-goto="prestaciones">
+          <span class="n">4</span><span class="t">Prestaciones</span>
+          <span class="d">Ventajas, desventajas e impacto fiscal de cada prestación
+            (fondo de ahorro, vales, seguros).</span>
+          <span class="go">Abrir &rarr;</span>
+        </button>
         <button class="idx" data-goto="tesoreria">
-          <span class="n">4</span><span class="t">Tesorería &amp; FX</span>
+          <span class="n">5</span><span class="t">Tesorería &amp; FX</span>
           <span class="d">Dispersión, optimización de comisiones y operaciones
             cambiarias con las soluciones de SOPROFI.</span>
           <span class="go">Abrir &rarr;</span>
         </button>
         <button class="idx" data-goto="regimenes">
-          <span class="n">5</span><span class="t">Regímenes</span>
+          <span class="n">6</span><span class="t">Regímenes</span>
           <span class="d">Base de conocimiento de los regímenes fiscales de
             contratación en México, con notas de cumplimiento.</span>
           <span class="go">Abrir &rarr;</span>
@@ -466,6 +532,22 @@ tfoot td.num{text-align:right;}
         subordinación real como contratación independiente (simulación · LFT/LSS,
         reformas 2021). <span class="flag">▲</span> = requiere verificación local / nota de cumplimiento.</div>
       <div class="reg-grid" id="reg-grid"></div>
+      <div class="reg-detalle" id="reg-detalle" hidden></div>
+    </section>
+
+    <!-- ===== PRESTACIONES ===== -->
+    <section class="page" data-page="prestaciones">
+      <div class="page-head">
+        <div class="eyebrow">Compensación</div>
+        <h2>Prestaciones adicionales</h2>
+        <p>Evalúa el tratamiento fiscal de cada prestación y simula su impacto para decidir con información.</p>
+      </div>
+      <div class="info">El impacto exacto en costo y neto lo calcula el motor de 7 calculadoras (Diagnóstico).
+        Aquí ves el tratamiento fiscal, las ventajas/desventajas y un desglose exento/gravable ilustrativo.
+        <span class="pend">▲ = regla pendiente de validación legal.</span></div>
+      <div style="margin-bottom:18px;"><label class="lab">Salario mensual de referencia (para topes)</label>
+        <input type="number" id="pres-salario" min="0" step="1000" placeholder="30000" style="max-width:260px; padding:9px 12px; font:inherit; font-size:13px; color:var(--text); background:var(--field); border:1px solid var(--field-bd); border-radius:5px;"></div>
+      <div class="pres-grid" id="pres-grid"></div>
     </section>
 
     <!-- ===== TESORERÍA & FX ===== -->
@@ -554,24 +636,78 @@ tfoot td.num{text-align:right;}
       "</td><td class='num'>"+mxn0(r[5])+"</td><td class='num pos'>+"+mxn0(r[6])+"</td></tr>";
   }).join("");
 
-  /* ---------- REGÍMENES ---------- */
-  var REG=[
-    ["Sueldos y Salarios","605","ISR progresivo ≤35% · IMSS + prestaciones de ley",false],
-    ["Asimilados a Salarios","605","ISR progresivo · sin prestaciones de ley",true],
-    ["RESICO Personas Físicas","626","ISR 1%–2.5% · tope 3.5M anual",true],
-    ["Actividades Profesionales","612","ISR progresivo ≤35% · deduce gastos",true],
-    ["Arrendamiento","606","ISR progresivo · deducción ciega 35%",false],
-    ["Plataformas Tecnológicas","625","Retenciones por plataforma",false],
-    ["PM · Régimen General","601","ISR 30% fijo · sin límite",false],
-    ["PM · RESICO","626","ISR 30% · flujo de efectivo · tope 35M",false],
-    ["PM · No Lucrativas","603","Sin ISR por objeto social",false],
-    ["Incorporación Fiscal (RIF)","621","En extinción · sin nuevas altas",true]
-  ];
-  $("reg-grid").innerHTML=REG.map(function(r){
-    return "<div class='reg'><div class='top'><span class='rn'>"+r[0]+"</span>"+
-      "<span class='clave'>"+r[1]+"</span></div><div class='isr'>"+r[2]+"</div>"+
-      (r[3]?"<div class='flag'>▲ Verificación / cumplimiento pendiente</div>":"")+"</div>";
+  /* ---------- DATOS (generados desde el backend) ---------- */
+  var WEBDATA = {"disclaimer": "Análisis orientativo, no exhaustivo; pendiente de validación por fiscalista/abogado laboral. No constituye asesoría individualizada.", "regimenes": [{"id": "SUELDOS_SALARIOS", "nombre": "Sueldos y Salarios", "clave": "605", "isr": "Tarifa mensual Art. 96 LISR; retiene y entera el patrón.", "riesgo": "Leve", "ventajas": ["Cero carga administrativa para el trabajador.", "Prestaciones de ley: aguinaldo, vacaciones, prima vacacional, IMSS, Infonavit y PTU.", "Deducciones personales prellenadas en la anual."], "desventajas": ["El trabajador no deduce libremente gastos de su actividad.", "ISR progresivo: puede escalar hasta 35%.", "Dependencia laboral (subordinación)."], "repercusiones": ["Es el esquema que la ley presume para el trabajo subordinado; minimiza el riesgo de que un tribunal reclasifique la relación.", "El riesgo se limita al cumplimiento ordinario: pago puntual de cuotas IMSS/Infonavit, prestaciones de ley y retención de ISR.", "Un despido sin causa puede derivar en demanda por indemnización, pero la relación laboral ya está reconocida."], "motivos": ["Contrato, horario, subordinación y prestaciones reconocidas: justo los elementos que un juez busca para declarar relación laboral — aquí ya están cubiertos."], "nota": ""}, {"id": "ASIMILADOS_SALARIOS", "nombre": "Ingresos Asimilados a Salarios", "clave": "605", "isr": "Retención por el pagador; tratamiento y supuestos específicos requieren verificación legal.", "riesgo": "Moderado", "ventajas": ["Retención de ISR simplificada por el pagador.", "Menor carga administrativa que honorarios."], "desventajas": ["No genera prestaciones de ley ni seguridad social por esta vía.", "Supuestos de asimilación acotados por la LISR."], "repercusiones": ["Si la persona presta servicios subordinados (horario, dirección, exclusividad), un tribunal laboral puede reconocer relación de trabajo pese a la figura de asimilado.", "Consecuencia: pago retroactivo de prestaciones, alta y cuotas IMSS/Infonavit, e indemnización.", "Válido para supuestos legítimos (consejeros, honorarios asimilados); riesgoso si encubre a un empleado."], "motivos": ["Subordinación", "Horario fijo", "Exclusividad", "Herramientas/lugar provistos", "Continuidad y pago periódico"], "nota": "Aplica solo a relaciones genuinamente independientes. Usar este régimen para un trabajador subordinado real constituye simulación (LFT/LSS, reformas 2021) y conlleva responsabilidad solidaria y sanciones."}, {"id": "RESICO_PF", "nombre": "Régimen Simplificado de Confianza (Personas Físicas)", "clave": "626", "isr": "Tasa sobre ingresos facturados y cobrados; tabla exacta por rango de ingreso requiere verificación.", "riesgo": "Alto", "ventajas": ["Tasas de ISR muy bajas (1%–2.5%).", "Simplicidad extrema; sin contabilidad electrónica compleja.", "No requiere comprobar gastos indispensables."], "desventajas": ["Límite estricto de 3.5 M/año; excederlo saca del régimen.", "No admite socios/accionistas ni ingresos incompatibles.", "No deduce gastos operativos."], "repercusiones": ["Pasar empleados reales a RESICO/honorarios puede ser reclasificado como relación laboral simulada. El trabajador puede demandar el reconocimiento de la relación ante el Tribunal Laboral.", "La empresa enfrenta: reinstalación o indemnización; pago de prestaciones no cubiertas (aguinaldo, vacaciones, prima); cuotas IMSS/Infonavit retroactivas con recargos.", "El SAT puede desconocer las deducciones por simulación de actos (Art. 69-B CFF) y fincar créditos fiscales."], "motivos": ["Subordinación", "Horario fijo", "Exclusividad", "Herramientas y lugar de la empresa", "Permanencia/continuidad", "Pago fijo periódico"], "nota": "Aplica solo a relaciones genuinamente independientes. Usar este régimen para un trabajador subordinado real constituye simulación (LFT/LSS, reformas 2021) y conlleva responsabilidad solidaria y sanciones."}, {"id": "ACT_EMP_PROF", "nombre": "Actividades Empresariales y Profesionales", "clave": "612", "isr": "Tarifa progresiva sobre la utilidad.", "riesgo": "Alto", "ventajas": ["Deducción de gastos operativos estrictamente indispensables.", "Sin límite estricto de ingresos.", "Amortización de pérdidas fiscales."], "desventajas": ["Carga administrativa alta.", "ISR progresivo hasta 35% sobre utilidades.", "Suele requerir contador."], "repercusiones": ["El honorario genuinamente independiente es válido; pero un “falso autónomo” (subordinado disfrazado) expone a la empresa a demanda por reconocimiento de relación laboral.", "Mismas consecuencias que RESICO: prestaciones e IMSS retroactivos, indemnización y contingencia fiscal por simulación.", "El indicio clave es la subordinación: quién dirige, controla y fija el horario del trabajo."], "motivos": ["Subordinación", "Horario y dirección de la empresa", "Exclusividad", "Continuidad", "Pago periódico fijo"], "nota": "Aplica solo a relaciones genuinamente independientes. Usar este régimen para un trabajador subordinado real constituye simulación (LFT/LSS, reformas 2021) y conlleva responsabilidad solidaria y sanciones."}, {"id": "ARRENDAMIENTO", "nombre": "Arrendamiento", "clave": "606", "isr": "Deducción ciega opcional de 35% o gastos reales.", "riesgo": "Leve", "ventajas": ["Deducción ciega de 35% sin comprobar; deduce predial.", "Opción de deducir gastos reales si superan 35%."], "desventajas": ["Debe declarar el ingreso aunque el inquilino no pague, si el contrato sigue vigente.", "Retenciones si arrienda a persona moral."], "repercusiones": ["No es un esquema de contratación de personal; no genera por sí mismo riesgo de demanda laboral.", "El riesgo es fiscal/civil: declarar el ingreso aunque el inquilino no pague, y las retenciones cuando se arrienda a persona moral."], "motivos": [], "nota": ""}, {"id": "PLATAFORMAS", "nombre": "Actividades Empresariales vía Plataformas Tecnológicas", "clave": "625", "isr": "Retenciones provisionales por la plataforma; p. ej. hasta 20% en transporte/entrega y hasta 8% en hospedaje/comercio.", "riesgo": "Moderado", "ventajas": ["Retenciones definitivas opcionales que simplifican el proceso.", "Integración formal automática al comercio digital."], "desventajas": ["Retenciones altas que merman el flujo mensual.", "Complejidad si se combinan ingresos fuera de plataformas."], "repercusiones": ["Existe un debate legal creciente sobre el carácter laboral de los trabajadores de plataformas; reformas recientes buscan reconocerles seguridad social.", "El control algorítmico y la dependencia económica pueden usarse para argumentar una relación laboral."], "motivos": ["Control algorítmico", "Dependencia económica", "Continuidad"], "nota": ""}, {"id": "PM_GENERAL", "nombre": "Régimen General de Ley de Personas Morales", "clave": "601", "isr": "Tasa corporativa de 30% sobre utilidad neta.", "riesgo": "Leve", "ventajas": ["Estructura corporativa sólida (socios, capital, patrimonio).", "Deducciones corporativas amplias."], "desventajas": ["Tasa fija de ISR de 30%.", "Obligaciones rigurosas; suele requerir equipo contable."], "repercusiones": ["Es el régimen fiscal de la empresa, no un esquema de contratación; no genera de suyo riesgo de demanda laboral.", "El riesgo es fiscal-corporativo: cumplimiento de contabilidad electrónica, DIOT y declaraciones; sanciones por incumplimiento."], "motivos": [], "nota": ""}, {"id": "RESICO_PM", "nombre": "Régimen Simplificado de Confianza (Personas Morales)", "clave": "626", "isr": "Misma tasa 30%, pero acumulación por flujo de efectivo.", "riesgo": "Leve", "ventajas": ["Paga ISR solo sobre lo efectivamente cobrado.", "Mejora drásticamente la liquidez de pequeñas empresas."], "desventajas": ["Límite de 35 M/año; excederlo migra al General.", "Todos los socios deben ser personas físicas."], "repercusiones": ["Régimen fiscal de la empresa; el riesgo no es laboral sino de permanencia en el régimen.", "Exceder 35 M de ingresos o incumplir requisitos obliga a migrar al Régimen General, con efectos retroactivos en el ejercicio."], "motivos": [], "nota": ""}, {"id": "PM_NO_LUCRATIVAS", "nombre": "Personas Morales con Fines No Lucrativos", "clave": "603", "isr": "No pagan ISR por los ingresos propios de su objeto social.", "riesgo": "Leve", "ventajas": ["Exención de ISR sobre ingresos del objeto social."], "desventajas": ["Restringidas a su objeto no lucrativo."], "repercusiones": ["El riesgo principal es perder la exención de ISR si se distribuyen remanentes o se desvía el objeto social.", "Las donatarias autorizadas tienen requisitos estrictos; su incumplimiento puede revocar la autorización."], "motivos": [], "nota": ""}, {"id": "RIF", "nombre": "Régimen de Incorporación Fiscal (en transición)", "clave": "621", "isr": "Descuentos graduales; sin nuevas incorporaciones.", "riesgo": "Leve", "ventajas": ["Disminuciones graduales de impuestos (esquema histórico)."], "desventajas": ["Ya no acepta nuevas altas; solo continúan los registrados."], "repercusiones": ["Régimen en extinción; solo continúan los contribuyentes ya registrados bajo reglas de transición.", "No admite nuevas altas, por lo que no es una opción de estructuración a futuro."], "motivos": [], "nota": ""}], "prestaciones": [{"id": "vales_despensa", "nombre": "Vales de despensa", "categoria": "Previsión social", "tratamiento_fiscal": "Exento hasta 40% de la UMA mensual; el excedente es gravable e integra el SDI.", "ventajas_empresa": ["Reduce la base de ISR, IMSS e ISN sobre la parte exenta.", "Alta percepción de valor por el trabajador a bajo costo fiscal.", "Deducible cumpliendo requisitos (monedero electrónico autorizado)."], "desventajas_empresa": ["Debe entregarse vía monedero electrónico autorizado por el SAT.", "El excedente al tope es gravable e integra el SDI.", "Comisión del emisor del monedero."], "fuente_pendiente": false}, {"id": "fondo_ahorro", "nombre": "Fondo de ahorro", "categoria": "Previsión social", "tratamiento_fiscal": "Exento hasta el menor de 13% del salario mensual o 1.3 UMA mensual; el excedente es gravable.", "ventajas_empresa": ["Exención que reduce ISR e IMSS sobre la aportación patronal.", "Fomenta el ahorro y la retención del talento.", "Deducible cumpliendo requisitos."], "desventajas_empresa": ["Requiere aportación equivalente del trabajador y un reglamento del fondo.", "Carga administrativa: retención, resguardo y entrega anual.", "El excedente al tope es gravable e integra el SDI."], "fuente_pendiente": false}, {"id": "vales_comida", "nombre": "Vales de comida", "categoria": "Previsión social", "tratamiento_fiscal": "Como previsión social puede ser exenta bajo condiciones; tope y reglas requieren validación legal.", "ventajas_empresa": ["Bien estructurada, mejora el clima laboral y puede ser exenta.", "Percepción de beneficio inmediato para el colaborador."], "desventajas_empresa": ["Reglas de exención y topes menos claros que despensa; a validar.", "Puede requerir comedor o monedero y control administrativo."], "fuente_pendiente": true}, {"id": "vales_gasolina", "nombre": "Vales de gasolina", "categoria": "Efectivo / consumo", "tratamiento_fiscal": "Como prestación al trabajador es 100% gravable e integra el SDI (no es previsión social exenta).", "ventajas_empresa": ["Útil para personal de campo/ventas con desplazamientos reales.", "Puede ser deducible si es un gasto estrictamente indispensable comprobado."], "desventajas_empresa": ["Sin ventaja fiscal como prestación: es 100% gravable e integra el SDI.", "Riesgo de reclasificación si no se liga a un gasto real de la operación."], "fuente_pendiente": true}, {"id": "seguro_gmm", "nombre": "Seguro de gastos médicos mayores", "categoria": "Seguro", "tratamiento_fiscal": "Prima exenta para el trabajador si el plan es general y no discriminatorio; no integra el SDI.", "ventajas_empresa": ["Prima exenta para el trabajador (no integra SDI) si es prestación general.", "Fuerte herramienta de retención y bienestar.", "Deducible cumpliendo requisitos."], "desventajas_empresa": ["Debe ser general (misma categoría de trabajadores) para conservar la exención.", "Costo patronal directo; no es efectivo de bolsillo para el trabajador.", "Renovación anual y administración de póliza."], "fuente_pendiente": true}, {"id": "seguro_vida", "nombre": "Seguro de vida", "categoria": "Seguro", "tratamiento_fiscal": "Prima exenta si es prestación general; no integra el SDI.", "ventajas_empresa": ["Prima exenta si es prestación general; no integra el SDI.", "Protección al colaborador y su familia; retención de talento."], "desventajas_empresa": ["Debe ser general para conservar la exención.", "Costo patronal; no es efectivo de bolsillo para el trabajador."], "fuente_pendiente": true}]};
+
+  /* ---------- REGÍMENES (Mejora 1) ---------- */
+  var RIESGO_CLASE={"Leve":"leve","Moderado":"moderado","Alto":"alto"};
+  function _blk(t,items,cls){ if(!items||!items.length) return "";
+    return "<div class='rd-blk "+(cls||"")+"'><div class='rd-h'>"+t+"</div><ul>"+
+      items.map(function(x){return "<li>"+x+"</li>";}).join("")+"</ul></div>"; }
+  function mostrarRegimen(r){
+    var d=$("reg-detalle");
+    d.innerHTML="<div class='rd-top'><div><span class='rd-name'>"+r.nombre+"</span>"+
+      "<span class='clave'>"+r.clave+"</span></div>"+
+      "<span class='riesgo "+RIESGO_CLASE[r.riesgo]+"'>Riesgo de demanda: "+r.riesgo+"</span></div>"+
+      (r.nota?"<div class='rd-nota'>"+r.nota+"</div>":"")+
+      "<div class='rd-grid'>"+_blk("Ventajas",r.ventajas,"pos")+
+        _blk("Desventajas",r.desventajas,"neg")+
+        _blk("Posibles repercusiones legales",r.repercusiones,"leg")+"</div>"+
+      (r.motivos&&r.motivos.length?"<div class='rd-mot'><div class='rd-h'>Factores que elevan el riesgo</div>"+
+        r.motivos.map(function(x){return "<span class='rchip'>"+x+"</span>";}).join("")+"</div>":"")+
+      "<div class='rd-disc'>"+WEBDATA.disclaimer+"</div>";
+    d.hidden=false; d.scrollIntoView({behavior:"smooth",block:"nearest"});
+  }
+  $("reg-grid").innerHTML=WEBDATA.regimenes.map(function(r,i){
+    return "<button class='reg' data-i='"+i+"'><div class='top'><span class='rn'>"+r.nombre+"</span>"+
+      "<span class='clave'>"+r.clave+"</span></div><div class='isr'>"+r.isr+"</div>"+
+      "<div class='reg-foot'><span class='riesgo sm "+RIESGO_CLASE[r.riesgo]+"'>"+r.riesgo+"</span>"+
+      "<span class='reg-mas'>Ver repercusiones &rarr;</span></div></button>";
   }).join("");
+  Array.prototype.forEach.call(document.querySelectorAll("#reg-grid .reg"),function(b){
+    b.addEventListener("click",function(){ mostrarRegimen(WEBDATA.regimenes[+b.getAttribute("data-i")]); });
+  });
+
+  /* ---------- PRESTACIONES (Mejora 2) ---------- */
+  var UMA_M=117.31*30.4;
+  var PREG={vales_despensa:{cap:function(s){return 0.40*UMA_M;},ef:true},
+            fondo_ahorro:{cap:function(s){return Math.min(0.13*s,1.3*UMA_M);},ef:true},
+            vales_comida:{cap:function(s){return 0.40*UMA_M;},ef:true},
+            vales_gasolina:{cap:function(s){return 0;},ef:true},
+            seguro_gmm:{cap:function(s){return Infinity;},ef:false},
+            seguro_vida:{cap:function(s){return Infinity;},ef:false}};
+  var mxnP=function(v){return v.toLocaleString('es-MX',{style:'currency',currency:'MXN',maximumFractionDigits:0});};
+  function salarioSim(){ var v=parseFloat($("pres-salario").value); return isNaN(v)||v<=0?30000:v; }
+  function calcPrest(id){
+    var inp=document.querySelector(".psim-in[data-id='"+id+"']");
+    var monto=parseFloat(inp.value)||0, out=$("pres-"+id);
+    if(monto<=0){ out.innerHTML=""; return; }
+    var r=PREG[id], cap=r.cap(salarioSim());
+    var exento=Math.min(monto,cap), gravable=Math.max(monto-cap,0);
+    var verdict=gravable<=0?(r.ef?"Exento — eficiente":"Exento — seguro (no es efectivo de bolsillo)"):
+                (exento<=0?"100% gravable — sin ventaja fiscal":"Parcialmente gravable");
+    var vcls=gravable<=0?"pos":(exento<=0?"neg":"mid");
+    out.innerHTML="<span class='pres-split'>Exento "+mxnP(exento)+" · Gravable "+mxnP(gravable)+"</span>"+
+      "<span class='pres-v "+vcls+"'>"+verdict+"</span>";
+  }
+  $("pres-grid").innerHTML=WEBDATA.prestaciones.map(function(p){
+    return "<div class='pcard'><div class='ptop'><span class='pn'>"+p.nombre+"</span>"+
+      "<span class='pcat'>"+p.categoria+"</span></div>"+
+      "<div class='pfis'>"+p.tratamiento_fiscal+(p.fuente_pendiente?" <span class='pend'>▲ a validar</span>":"")+"</div>"+
+      "<div class='pcols'><div class='pcol pos'><div class='pch'>Ventajas para la empresa</div><ul>"+
+        p.ventajas_empresa.map(function(x){return "<li>"+x+"</li>";}).join("")+"</ul></div>"+
+      "<div class='pcol neg'><div class='pch'>Desventajas</div><ul>"+
+        p.desventajas_empresa.map(function(x){return "<li>"+x+"</li>";}).join("")+"</ul></div></div>"+
+      "<div class='psim'><label>Monto mensual a simular</label>"+
+        "<input type='number' min='0' step='100' class='psim-in' data-id='"+p.id+"' placeholder='0'></div>"+
+      "<div class='pres' id='pres-"+p.id+"'></div></div>";
+  }).join("");
+  Array.prototype.forEach.call(document.querySelectorAll(".psim-in"),function(inp){
+    inp.addEventListener("input",function(){ calcPrest(inp.getAttribute("data-id")); });
+  });
+  $("pres-salario").addEventListener("input",function(){
+    Array.prototype.forEach.call(document.querySelectorAll(".psim-in"),function(inp){ calcPrest(inp.getAttribute("data-id")); });
+  });
 
   /* ---------- CUESTIONARIO: triaje (misma lógica que el backend) ---------- */
   var rop=$("q_op"); rop.addEventListener("input",function(){$("q_opv").textContent=rop.value;});
