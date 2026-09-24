@@ -313,6 +313,22 @@ tfoot td.num{text-align:right;}
   letter-spacing:.5px; color:var(--ambar); margin-bottom:7px;}
 .osrc .disc{font-size:12.5px; color:var(--text);}
 .osrc ol{margin:9px 0 0; padding-left:18px;} .osrc li{font-size:12px; margin:4px 0; color:var(--text);}
+
+/* Carga de nómina (Diagnóstico) */
+.upload-box{border:1px dashed var(--field-bd); border-radius:10px; padding:16px 18px;
+  background:var(--tile); margin-bottom:18px; display:flex; flex-wrap:wrap; gap:12px 16px; align-items:center;}
+.upload-box .ut{flex:1 1 260px; font-size:13px; color:var(--text);}
+.upload-box input[type=file]{font:inherit; font-size:12.5px; color:var(--text);}
+.upload-box .btn-ghost{background:transparent; color:var(--navy-soft); border:1px solid var(--field-bd);
+  font:inherit; font-weight:600; font-size:12.5px; padding:8px 14px; border-radius:6px; cursor:pointer;}
+.up-summary{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px;}
+.up-pill{font-size:12px; font-weight:600; padding:6px 12px; border-radius:20px; background:var(--tile); border:1px solid var(--rule);}
+.up-pill.ok{background:rgba(30,122,91,.14); color:var(--verde);}
+.up-pill.err{background:rgba(192,57,43,.14); color:#C0392B;}
+.up-errores{margin-bottom:16px; border-left:3px solid #C0392B; background:rgba(192,57,43,.06);
+  border-radius:6px; padding:12px 15px; font-size:12px;}
+.up-errores .ct{font-weight:700; color:#C0392B; text-transform:uppercase; font-size:10.5px; letter-spacing:.5px; display:block; margin-bottom:6px;}
+.up-errores ul{margin:0; padding-left:16px;} .up-errores li{margin:3px 0;}
 </style>
 
 <!-- =================== LOGIN =================== -->
@@ -530,10 +546,17 @@ tfoot td.num{text-align:right;}
         <h2>Diagnóstico de optimización</h2>
         <p>Grupo Manufacturas del Bajío, S.A. de C.V. · escenario cost-neutral.</p>
       </div>
+      <div class="upload-box">
+        <div class="ut"><b>Sube la nómina de tu empresa</b> (CSV) para un diagnóstico real, o revisa el ejemplo precargado.</div>
+        <input type="file" id="nomina-file" accept=".csv,text/csv">
+        <button class="btn-ghost" id="nomina-reset">Ver ejemplo</button>
+      </div>
+      <div class="up-summary" id="up-summary" hidden></div>
+      <div class="up-errores" id="up-errores" hidden></div>
       <div class="estim" style="margin-bottom:22px;">
         <div class="k">Flujo de efectivo liberado · anualizado</div>
-        <div class="v" style="font-size:40px;">$75,351</div>
-        <div class="n">1.88% del costo de nómina · el personal mantiene o mejora su ingreso neto.</div>
+        <div class="v" style="font-size:40px;" id="diag-grannum">$75,351</div>
+        <div class="n" id="diag-sub">1.88% del costo de nómina · el personal mantiene o mejora su ingreso neto.</div>
       </div>
       <div class="card">
         <h3>Detalle por colaborador</h3>
@@ -541,7 +564,7 @@ tfoot td.num{text-align:right;}
           <table>
             <thead><tr><th>Colaborador</th><th>Estado</th><th class="num">Costo act./mes</th><th class="num">Costo optim./mes</th><th class="num">Ahorro/mes</th><th class="num">Flujo anual</th><th class="num">Δ Neto trab.</th></tr></thead>
             <tbody id="diag-rows"></tbody>
-            <tfoot><tr><td colspan="4">Total cartera</td><td class="num">$6,279</td><td class="num">$75,351</td><td class="num"></td></tr></tfoot>
+            <tfoot><tr><td colspan="4">Total cartera</td><td class="num" id="diag-tot-ahorro">$6,279</td><td class="num" id="diag-tot-flujo">$75,351</td><td class="num"></td></tr></tfoot>
           </table>
         </div>
       </div>
@@ -785,6 +808,155 @@ tfoot td.num{text-align:right;}
     }
     $("cambio-btn").addEventListener("click", generar);
   })();
+
+  /* ---------- MOTOR EN EL NAVEGADOR (carga de nómina) ---------- */
+  var MOTOR = {"umaD": 117.31, "topeSbcDiario": 2932.75, "isr": [[0.01, 0.0, 0.0192], [844.6, 16.22, 0.064], [7168.52, 420.95, 0.1088], [12598.03, 1011.68, 0.16], [14644.65, 1339.14, 0.1792], [17533.65, 1856.84, 0.2136], [35362.84, 5665.16, 0.2352], [55736.69, 10457.09, 0.3], [106410.51, 25659.23, 0.32], [141880.67, 37009.69, 0.34], [425642.0, 133488.54, 0.35]], "cesantia": [[0.0, 0.0315], [1.01, 0.03676], [1.51, 0.04851], [2.01, 0.0556], [2.51, 0.0603], [3.01, 0.0636], [3.51, 0.0694], [4.01, 0.07513]], "subTope": 9081.0, "subMonto": 406.83, "imss": {"emFija": 0.204, "emExcP": 0.011, "emExcO": 0.004, "emDinP": 0.007, "emDinO": 0.0025, "gmpP": 0.0105, "gmpO": 0.00375, "ivP": 0.0175, "ivO": 0.00625, "guarP": 0.01, "retP": 0.02, "infP": 0.05, "cvO": 0.01125}, "valePct": 0.4, "fondoPct": 0.13, "fondoUma": 1.3, "isn": {"Aguascalientes": 0.025, "Baja California": 0.0425, "Baja California Sur": 0.03, "Campeche": 0.03, "Chiapas": 0.03, "Chihuahua": 0.04, "Ciudad de México": 0.04, "Coahuila": 0.02, "Colima": 0.03, "Durango": 0.03, "Estado de México": 0.03, "Guanajuato": 0.03, "Guerrero": 0.03, "Hidalgo": 0.03, "Jalisco": 0.03, "Michoacan": 0.03, "Morelos": 0.03, "Nayarit": 0.03, "Nuevo Leon": 0.04, "Oaxaca": 0.03, "Puebla": 0.03, "Queretaro": 0.03, "Quintana Roo": 0.03, "San Luis Potosi": 0.03, "Sinaloa": 0.03, "Sonora": 0.03, "Tabasco": 0.03, "Tamaulipas": 0.04, "Tlaxcala": 0.03, "Veracruz": 0.03, "Yucatan": 0.0375, "Zacatecas": 0.035}};
+  (function(){
+    var M=MOTOR, umaD=M.umaD, umaM=umaD*30.4;
+    function tramoISR(base){ var t=M.isr[0]; for(var i=0;i<M.isr.length;i++){ if(base>=M.isr[i][0]) t=M.isr[i]; else break; } return t; }
+    function tasaCV(vu){ var t=M.cesantia[0]; for(var i=0;i<M.cesantia.length;i++){ if(vu>=M.cesantia[i][0]) t=M.cesantia[i]; else break; } return t[1]; }
+    function imss(sbc, primaRT, dias){
+      var i=M.imss, exc=Math.max(sbc-3*umaD,0);
+      var pat=umaD*i.emFija*dias + exc*i.emExcP*dias + sbc*i.emDinP*dias + sbc*i.gmpP*dias +
+              sbc*i.ivP*dias + sbc*i.guarP*dias + sbc*primaRT*dias + sbc*i.retP*dias +
+              sbc*tasaCV(sbc/umaD)*dias + sbc*i.infP*dias;
+      var obr=exc*i.emExcO*dias + sbc*i.emDinO*dias + sbc*i.gmpO*dias + sbc*i.ivO*dias + sbc*i.cvO*dias;
+      return {pat:pat, obr:obr};
+    }
+    function escenario(e, vale, fondo){
+      var salM=e.sdb*30.4;
+      var valeTope=M.valePct*umaM, fondoTope=Math.min(M.fondoPct*salM, M.fondoUma*umaM);
+      var valeEx=Math.min(vale,valeTope), valeGr=Math.max(vale-valeTope,0);
+      var fondoEx=Math.min(fondo,fondoTope), fondoGr=Math.max(fondo-fondoTope,0);
+      var disp=e.integrable, solic=Math.max((vale-e.valeAct)+(fondo-e.fondoAct),0), recl=Math.min(solic,disp);
+      var prestInt=(disp-recl)+valeGr+fondoGr;
+      var baseISR=salM+prestInt+e.noIntegrable;
+      var prestDia=prestInt*12/365;
+      var sdiAntes=e.sdb*(1+e.aguinaldo/365+e.vac*e.primaVac/365)+prestDia;
+      var sdi=Math.min(sdiAntes, M.topeSbcDiario);
+      var im=imss(sdi, e.primaRT, e.dias);
+      var tr=tramoISR(baseISR), isrBruto=(baseISR-tr[0])*tr[2]+tr[1];
+      var subs=baseISR<=M.subTope?M.subMonto:0, isrRet=Math.max(isrBruto-subs,0);
+      var isn=baseISR*(M.isn[e.estado]||0);
+      var costo=baseISR+valeEx+fondoEx+im.pat+isn;
+      var valor=baseISR+valeEx+fondoEx, neto=valor-isrRet-im.obr;
+      return {costo:costo, neto:neto};
+    }
+    function optimizar(e){
+      var salM=e.sdb*30.4, valeTope=M.valePct*umaM, fondoTope=Math.min(M.fondoPct*salM, M.fondoUma*umaM);
+      var gapV=Math.max(valeTope-e.valeAct,0), gapF=Math.max(fondoTope-e.fondoAct,0);
+      var recl=Math.min(gapV+gapF, e.integrable), addV=Math.min(recl,gapV), addF=recl-addV;
+      var actual=escenario(e, e.valeAct, e.fondoAct);
+      var opt=escenario(e, e.valeAct+addV, e.fondoAct+addF);
+      return {actual:actual, opt:opt, ahorro:actual.costo-opt.costo, flujo:(actual.costo-opt.costo)*12,
+              dNeto:opt.neto-actual.neto};
+    }
+    window.QWS_optimizarCartera=function(emps){
+      var rows=[], aMes=0, flujo=0, costoAct=0, todos=true;
+      emps.forEach(function(e){
+        var r=optimizar(e); aMes+=r.ahorro; flujo+=r.flujo; costoAct+=r.actual.costo*12;
+        if(r.dNeto < -0.01) todos=false;
+        rows.push([e.nombre, e.estado, r.actual.costo, r.opt.costo, r.ahorro, r.flujo, r.dNeto]);
+      });
+      return {rows:rows, aMes:aMes, flujo:flujo, costoAct:costoAct, pct:costoAct?flujo/costoAct:0, todos:todos, n:emps.length};
+    };
+
+    // --- Parseo y validación de CSV (espejo del loader) ---
+    var ALIAS={ "id":"id","id empleado":"id","clave":"id","nombre":"nombre",
+      "estado":"estado","estado (isn)":"estado","estado isn":"estado",
+      "salario diario base (sdb) $":"sdb","salario diario base":"sdb","sdb":"sdb","salario diario base sdb":"sdb",
+      "dias de aguinaldo":"aguinaldo","dias aguinaldo":"aguinaldo","aguinaldo":"aguinaldo",
+      "dias de vacaciones":"vac","dias vacaciones":"vac","vacaciones":"vac",
+      "prima vacacional %":"primaVac","prima vacacional":"primaVac",
+      "otras prestaciones integrables mensuales $":"integrable","otras prestaciones integrables":"integrable","prestaciones integrables":"integrable",
+      "prima de riesgo de trabajo %":"primaRT","prima de riesgo de trabajo":"primaRT","prima riesgo trabajo":"primaRT","prima de riesgo":"primaRT",
+      "dias trabajados en el mes":"dias","dias trabajados":"dias","dias trabajados mes":"dias",
+      "vale de despensa mensual actual $":"valeAct","vale de despensa actual":"valeAct","vale despensa actual":"valeAct","vale despensa":"valeAct",
+      "aportacion patronal fondo de ahorro actual $":"fondoAct","fondo de ahorro actual":"fondoAct","fondo ahorro actual":"fondoAct","fondo de ahorro":"fondoAct",
+      "otras percepciones gravables no integrables mensuales $":"noIntegrable","otras percepciones no integrables":"noIntegrable","percepciones no integrables":"noIntegrable" };
+    function norm(s){ return (s||"").toString().replace(/_/g," ").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/\s+/g," ").trim(); }
+    function parseCSV(txt){
+      var rows=[], row=[], cur="", q=false;
+      for(var i=0;i<txt.length;i++){ var ch=txt[i];
+        if(q){ if(ch=='"'){ if(txt[i+1]=='"'){cur+='"';i++;} else q=false; } else cur+=ch; }
+        else { if(ch=='"') q=true; else if(ch==','){ row.push(cur); cur=""; }
+          else if(ch=='\n'){ row.push(cur); rows.push(row); row=[]; cur=""; }
+          else if(ch!='\r') cur+=ch; } }
+      if(cur.length||row.length){ row.push(cur); rows.push(row); }
+      return rows.filter(function(r){ return r.some(function(x){return (x||"").trim();}); });
+    }
+    var PCT=["primaVac","primaRT"];
+    function toNum(v, campo){ if(v==null||v==="") return null; var s=(""+v).trim(); var pct=/%$/.test(s);
+      var n=parseFloat(s.replace(/[$,%\s]/g,"")); if(isNaN(n)) return NaN;
+      if(PCT.indexOf(campo)>=0 && (pct||n>1)) n/=100; return n; }
+    function empDefault(){ return {aguinaldo:15,vac:12,primaVac:0.25,integrable:0,primaRT:0.0054355,dias:30,valeAct:0,fondoAct:0,noIntegrable:0}; }
+    window.QWS_parseNomina=function(txt){
+      var rows=parseCSV(txt); if(!rows.length) return {emps:[],errores:[],leidas:0};
+      var map={}; rows[0].forEach(function(h,i){ var f=ALIAS[norm(h)]; if(f) map[i]=f; });
+      var emps=[], errores=[], leidas=0;
+      for(var r=1;r<rows.length;r++){ var raw=rows[r]; var e=empDefault(), err=null, id="";
+        for(var i in map){ var f=map[i], val=raw[i];
+          if(f=="id"){ id=(val||"").trim(); e.id=id; }
+          else if(f=="nombre") e.nombre=(val||"").trim();
+          else if(f=="estado") e.estado=(val||"").trim();
+          else { var num=toNum(val, f); if(num!=null){ if(isNaN(num)){ err="valor inválido en '"+f+"'"; } else e[f]=num; } } }
+        leidas++;
+        if(!e.id) err=err||"falta 'id'";
+        else if(!e.estado) err=err||"falta 'estado'";
+        else if(!(e.estado in MOTOR.isn)) err=err||("estado no catalogado: '"+e.estado+"'");
+        else if(!(e.sdb>0)) err=err||"salario diario base debe ser > 0";
+        if(err) errores.push({fila:r+1, id:id, motivo:err}); else { if(!e.nombre) e.nombre=e.id; emps.push(e); }
+      }
+      return {emps:emps, errores:errores, leidas:leidas};
+    };
+  })();
+
+  /* ---------- RENDER DIAGNÓSTICO (ejemplo o archivo) ---------- */
+  var SAMPLE_EMP=[
+    {id:"EMP-001",nombre:"Juan Pérez López",estado:"Ciudad de México",sdb:800,integrable:5000},
+    {id:"EMP-002",nombre:"María Fernanda Ríos",estado:"Jalisco",sdb:1200,integrable:7000},
+    {id:"EMP-003",nombre:"Carlos Mendoza Salas",estado:"Nuevo Leon",sdb:2500,integrable:12000},
+    {id:"EMP-004",nombre:"Ana Sofía Torres",estado:"Estado de México",sdb:650,integrable:3500},
+    {id:"EMP-005",nombre:"Roberto Aguilar Vega",estado:"Baja California",sdb:1800,integrable:9000},
+    {id:"EMP-006",nombre:"Lucía Hernández Cruz",estado:"Yucatan",sdb:480,integrable:2000}
+  ].map(function(e){ return Object.assign({aguinaldo:15,vac:12,primaVac:0.25,primaRT:0.0054355,dias:30,valeAct:0,fondoAct:0,noIntegrable:0}, e); });
+  function pintaDiag(cart, fuente, errores, leidas){
+    var mx=function(v){return "$"+Math.round(v).toLocaleString("es-MX");};
+    $("diag-grannum").textContent=mx(cart.flujo);
+    $("diag-sub").textContent=(cart.pct*100).toFixed(2)+"% del costo de nómina · "+
+      (cart.todos?"el personal mantiene o mejora su ingreso neto.":"revisar: algún colaborador reduce su neto.");
+    $("diag-rows").innerHTML=cart.rows.map(function(r){
+      return "<tr><td>"+r[0]+"</td><td class='est'>"+r[1]+"</td><td class='num'>"+mx(r[2])+
+        "</td><td class='num'>"+mx(r[3])+"</td><td class='num pos'>"+mx(r[4])+
+        "</td><td class='num'>"+mx(r[5])+"</td><td class='num pos'>+"+mx(r[6])+"</td></tr>";
+    }).join("");
+    $("diag-tot-ahorro").textContent=mx(cart.aMes);
+    $("diag-tot-flujo").textContent=mx(cart.flujo);
+    var sum=$("up-summary"); sum.hidden=false;
+    sum.innerHTML="<span class='up-pill'>"+(fuente==="archivo"?"Datos: archivo subido":"Datos: ejemplo")+"</span>"+
+      "<span class='up-pill ok'>"+cart.n+" colaboradores válidos</span>"+
+      (errores&&errores.length?"<span class='up-pill err'>"+errores.length+" con error</span>":"");
+    var eb=$("up-errores");
+    if(errores&&errores.length){ eb.hidden=false;
+      eb.innerHTML="<span class='ct'>Filas con error (no incluidas)</span><ul>"+
+        errores.map(function(x){return "<li>Fila "+x.fila+(x.id?" ["+x.id+"]":"")+": "+x.motivo+"</li>";}).join("")+"</ul>";
+    } else eb.hidden=true;
+  }
+  function diagEjemplo(){ pintaDiag(QWS_optimizarCartera(SAMPLE_EMP),"ejemplo",[],0); }
+  diagEjemplo();
+  $("nomina-reset").addEventListener("click", diagEjemplo);
+  $("nomina-file").addEventListener("change", function(ev){
+    var f=ev.target.files[0]; if(!f) return;
+    var rd=new FileReader();
+    rd.onload=function(){ try{
+      var res=QWS_parseNomina(rd.result);
+      if(!res.emps.length){ $("up-summary").hidden=false;
+        $("up-summary").innerHTML="<span class='up-pill err'>No se cargaron colaboradores válidos ("+res.errores.length+" con error)</span>";
+        pintaDiag({rows:[],aMes:0,flujo:0,costoAct:0,pct:0,todos:true,n:0},"archivo",res.errores,res.leidas); return; }
+      pintaDiag(QWS_optimizarCartera(res.emps),"archivo",res.errores,res.leidas);
+    }catch(e){ $("up-summary").hidden=false; $("up-summary").innerHTML="<span class='up-pill err'>No se pudo leer el archivo.</span>"; } };
+    rd.readAsText(f,"utf-8");
+  });
 
   /* ---------- CUESTIONARIO: triaje (misma lógica que el backend) ---------- */
   var rop=$("q_op"); rop.addEventListener("input",function(){$("q_opv").textContent=rop.value;});
